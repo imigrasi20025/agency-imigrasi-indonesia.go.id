@@ -550,7 +550,7 @@
 
                 <!-- Payment Success Section (Hidden by default) -->
                 <div id="paymentSuccessSection" class="payment-success-section">
-                    <p><strong>Batas waktu pembayaran 2 jam berjalan mundur walaupun user reload halaman waktu terus berjalan</strong></p>
+                    <!-- Teks dihapus, section ini akan tetap muncul untuk memberi jarak visual -->
                 </div>
 
                 <div class="disclaimer-box">
@@ -628,7 +628,13 @@
             // --- LOGIKA MODAL PEMBAYARAN ---
             function openPaymentModal() {
                 paymentModal.style.display = 'flex';
-                startCountdown();
+                // Jika timer belum pernah dibuat, buat timer baru
+                if (!localStorage.getItem(TIMER_DURATION_KEY)) {
+                    startCountdown();
+                } else {
+                    // Jika timer sudah ada, cukup tampilkan saja
+                    updateCountdownDisplay();
+                }
             }
 
             function closePaymentModal() {
@@ -674,60 +680,69 @@
 
             function handlePaymentSuccess() {
                 // Tampilkan notifikasi terlebih dahulu
-                alert('segera datang pada tgl 05 december 2025 pukul 13:00 wib kantor imigrasi indonesia');
+                alert('Pembayaran dengan saldo agency berhasil. Silakan tunggu konfirmasi selanjutnya.');
 
-                // PERUBAHAN: Timer TIDAK dihentikan dan localStorage TIDAK dihapus
-                // clearInterval(timerInterval); --> DIHAPUS
-                // localStorage.removeItem(TIMER_DURATION_KEY); --> DIHAPUS
+                // Stop countdown
+                clearInterval(timerInterval);
+                localStorage.removeItem(TIMER_DURATION_KEY);
                 
-                // Update modal view
-                paymentSuccessSection.style.display = 'block';
-                copyCodeContainer.style.display = 'none';
-                // countdownEl.style.display = 'none'; --> DIHAPUS agar timer tetap terlihat
-                useBalanceBtn.disabled = true;
-                
-                // Update main card view
-                verificationCard.classList.remove('card-urgent');
-                verificationCard.classList.add('card-verified');
-                
-                cardTitle.innerText = '✅ Berhasil Terverifikasi';
-                cardTitle.style.color = '#28a745';
-                
-                cardBadge.classList.remove('badge-danger');
-                cardBadge.classList.add('badge-success');
-                cardBadge.innerText = 'Berhasil Verifikasi';
-                
-                actionContainer.innerHTML = `
-                    <div class="appointment-details">
-                        <p><strong>Jadwal Kedatangan:</strong></p>
-                        <p>05 December 2025, Pukul 13:00 WIB</p>
-                        <p>Kantor Imigrasi Indonesia</p>
-                    </div>
-                `;
+                // Tutup modal
+                closePaymentModal();
+
+                // Kembalikan tombol utama ke keadaan semula dan nonaktifkan
+                completeBtn.disabled = true;
+                completeBtn.innerText = 'Sedang Diproses';
+
+                // Sembunyikan tombol "Gunakan Saldo" di modal untuk kedepannya
+                useBalanceBtn.style.display = 'none';
             }
 
             // --- LOGIKA COUNTDOWN TIMER ---
             function startCountdown() {
                 let deadline = localStorage.getItem(TIMER_DURATION_KEY);
                 if (!deadline) {
+                    // Buat deadline baru 2 jam dari sekarang
                     deadline = new Date().getTime() + (2 * 60 * 60 * 1000);
                     localStorage.setItem(TIMER_DURATION_KEY, deadline);
                 }
+                
+                // Hentikan interval yang lama jika ada
                 if (timerInterval) clearInterval(timerInterval);
+
+                // Jalankan interval setiap detik
                 timerInterval = setInterval(function() {
                     const now = new Date().getTime();
                     const distance = deadline - now;
+                    
                     if (distance < 0) {
                         clearInterval(timerInterval);
                         localStorage.removeItem(TIMER_DURATION_KEY);
                         countdownEl.innerHTML = "Waktu Habis";
                         return;
                     }
+                    
                     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
                     countdownEl.innerHTML = `Sisa Waktu: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                 }, 1000);
+            }
+
+            // Fungsi untuk memperbarui tampilan tanpa memulai timer baru
+            function updateCountdownDisplay() {
+                const deadline = localStorage.getItem(TIMER_DURATION_KEY);
+                if (deadline) {
+                    const now = new Date().getTime();
+                    const distance = deadline - now;
+                    if (distance < 0) {
+                        countdownEl.innerHTML = "Waktu Habis";
+                    } else {
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        countdownEl.innerHTML = `Sisa Waktu: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                }
             }
             
             // --- LOGIKA TOMBOl "LIHAT LAINNYA" ---
