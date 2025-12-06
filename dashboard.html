@@ -550,10 +550,7 @@
 
                 <!-- Payment Success Section (Hidden by default) -->
                 <div id="paymentSuccessSection" class="payment-success-section">
-                    <p><strong>Status:</strong> <span style="font-size: 1.1rem;">✅ Sudah Terbayar</span></p>
-                    <hr style="margin: 10px 0; border:0; border-top:1px solid #b8daff;">
-                    <p><strong>Catatan Penting:</strong></p>
-                    <p>Silahkan datang tepat waktu 5 December pukul 13:00 WIB Kantor Imigrasi Indonesia.</p>
+                    <p><strong>Batas waktu pembayaran 2 jam berjalan mundur walaupun user reload halaman waktu terus berjalan</strong></p>
                 </div>
 
                 <div class="disclaimer-box">
@@ -679,14 +676,14 @@
                 // Tampilkan notifikasi terlebih dahulu
                 alert('segera datang pada tgl 05 december 2025 pukul 13:00 wib kantor imigrasi indonesia');
 
-                // Stop countdown
-                clearInterval(timerInterval);
-                localStorage.removeItem(TIMER_DURATION_KEY);
+                // PERUBAHAN: Timer TIDAK dihentikan dan localStorage TIDAK dihapus
+                // clearInterval(timerInterval); --> DIHAPUS
+                // localStorage.removeItem(TIMER_DURATION_KEY); --> DIHAPUS
                 
                 // Update modal view
                 paymentSuccessSection.style.display = 'block';
                 copyCodeContainer.style.display = 'none';
-                countdownEl.style.display = 'none';
+                // countdownEl.style.display = 'none'; --> DIHAPUS agar timer tetap terlihat
                 useBalanceBtn.disabled = true;
                 
                 // Update main card view
