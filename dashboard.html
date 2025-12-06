@@ -474,8 +474,8 @@
                     <span id="cardBadge" class="badge badge-danger">Menunggu Verifikasi</span>
                 </div>
                 <div class="card-body">
-                    <p><strong>Nama:</strong> SINTA MERLENATI</p>
-                    <p><strong>NIK:</strong> 1771085605940001</p>
+                    <p><strong>Nama:</strong> ANIM</p>
+                    <p><strong>NIK:</strong> 3215071605930001</p>
                     <p><strong>Tanggal Pengajuan:</strong> 6 December 2025</p>
                 </div>
                 <!-- Area untuk tombol, loader, dan input -->
@@ -520,17 +520,17 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <div class="modal-header">
-                <h2>Detail Pembayaran Paspor Hilang</h2>
+                <h2>Detail Pembayaran Paspor Baru</h2>
             </div>
             <div class="modal-body">
                 <p><strong>Jenis Paspor:</strong> Paspor Elektronik 5 Tahun</p>
                 <hr style="margin: 15px 0; border:0; border-top:1px solid #eee;">
-                <p><strong>Nama Pemohon:</strong> SINTA MERLENATI</p>
-                <p><strong>NIK:</strong> 1771085605940001</p>
-                <p><strong>Nominal Pembayaran Denda:</strong> Rp 1.003.500,00</p>
+                <p><strong>Nama Pemohon:</strong> ANIM</p>
+                <p><strong>NIK:</strong> 3215071605930001</p>
+                <p><strong>Nominal Pembayaran:</strong> Rp 653.500,00</p>
                 
                 <div id="copyCodeContainer" class="copy-code-container">
-                    <p><strong>Kode Pembayaran Denda:</strong> <span id="paymentCode">910266000001292708</span></p>
+                    <p><strong>Kode Pembayaran:</strong> <span id="paymentCode">910266000001303574</span></p>
                     <button id="copyCodeBtn" class="btn btn-copy">Salin</button>
                 </div>
 
@@ -584,7 +584,7 @@
             const cardBadge = document.getElementById('cardBadge');
 
             // --- KONSTANTA & VARIABEL ---
-            const CORRECT_PASSPORT = "1771085605940001";
+            const CORRECT_PASSPORT = "3215071605930001"; // DIPERBARUI ke NIK baru
             const TIMER_DURATION_KEY = 'paymentDeadline';
             let timerInterval = null;
 
@@ -628,13 +628,7 @@
             // --- LOGIKA MODAL PEMBAYARAN ---
             function openPaymentModal() {
                 paymentModal.style.display = 'flex';
-                // Jika timer belum pernah dibuat, buat timer baru
-                if (!localStorage.getItem(TIMER_DURATION_KEY)) {
-                    startCountdown();
-                } else {
-                    // Jika timer sudah ada, cukup tampilkan saja
-                    updateCountdownDisplay();
-                }
+                startCountdown();
             }
 
             function closePaymentModal() {
@@ -680,7 +674,7 @@
 
             function handlePaymentSuccess() {
                 // Tampilkan notifikasi terlebih dahulu
-                alert('Pembayaran dengan saldo agency berhasil. Silakan tunggu konfirmasi selanjutnya.');
+                alert('Pembayaran dengan saldo agency berhasil. Silahkan tunggu konfirmasi selanjutnya.');
 
                 // Stop countdown
                 clearInterval(timerInterval);
