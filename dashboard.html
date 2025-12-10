@@ -232,21 +232,6 @@
             background-color: #dee2e6;
         }
 
-        .btn-toggle {
-            background-color: #6c757d;
-            color: #fff;
-            border: none;
-            margin-top: 15px;
-            width: 100%;
-        }
-        .btn-toggle.active {
-            background-color: #28a745;
-        }
-        .btn-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        
         /* --- Form Control Styles --- */
         .form-control {
             width: 100%;
@@ -474,9 +459,9 @@
                     <span id="cardBadge" class="badge badge-danger">Menunggu Verifikasi</span>
                 </div>
                 <div class="card-body">
-                    <p><strong>Nama:</strong> ANIM</p>
-                    <p><strong>NIK:</strong> 3215071605930001</p>
-                    <p><strong>Tanggal Pengajuan:</strong> 6 December 2025</p>
+                    <p><strong>Nama:</strong> EVA ARAFIAH</p>
+                    <p><strong>NIK:</strong> 3210044612850041</p>
+                    <p><strong>Tanggal Pengajuan:</strong> 10 December 2025</p>
                 </div>
                 <!-- Area untuk tombol, loader, dan input -->
                 <div id="actionContainer" class="action-area">
@@ -520,17 +505,18 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <div class="modal-header">
-                <h2>Detail Pembayaran Paspor Baru</h2>
+                <h2>Detail Pembayaran Paspor Beda Data</h2>
             </div>
             <div class="modal-body">
                 <p><strong>Jenis Paspor:</strong> Paspor Elektronik 5 Tahun</p>
                 <hr style="margin: 15px 0; border:0; border-top:1px solid #eee;">
-                <p><strong>Nama Pemohon:</strong> ANIM</p>
-                <p><strong>NIK:</strong> 3215071605930001</p>
+                <p><strong>Nama Pemohon:</strong> EVA ARAFIAH</p>
+                <p><strong>NIK:</strong> 3210044612850041</p>
                 <p><strong>Nominal Pembayaran:</strong> Rp 653.500,00</p>
+                <p><strong>Keterangan:</strong> Pembayaran permohonan paspor beda data</p>
                 
                 <div id="copyCodeContainer" class="copy-code-container">
-                    <p><strong>Kode Pembayaran:</strong> <span id="paymentCode">910266000001303574</span></p>
+                    <p><strong>Kode Pembayaran:</strong> <span id="paymentCode">910266000001408591</span></p>
                     <button id="copyCodeBtn" class="btn btn-copy">Salin</button>
                 </div>
 
@@ -540,17 +526,9 @@
                 <p style="font-size:0.9rem; color:#555;"><strong>Email:</strong> agencyerick@indonesia.com</p>
                 <p style="font-size:0.9rem; color:#555;"><strong>ID:</strong> DNP ALTRADIGIPLAY SARI</p>
                 <p style="font-size:0.9rem; color:#555;"><strong>Nama:</strong> SARI NINGSIH SH</p>
-
-                <!-- Tombol Toggle Saldo -->
-                <button id="useBalanceBtn" class="btn btn-toggle">Tidak Gunakan Saldo</button>
                 
                 <div id="countdown" class="countdown-timer">
                     <!-- Timer akan dimuat di sini oleh JavaScript -->
-                </div>
-
-                <!-- Payment Success Section (Hidden by default) -->
-                <div id="paymentSuccessSection" class="payment-success-section">
-                    <!-- Teks dihapus, section ini akan tetap muncul untuk memberi jarak visual -->
                 </div>
 
                 <div class="disclaimer-box">
@@ -572,7 +550,6 @@
             const countdownEl = document.getElementById('countdown');
             const copyCodeBtn = document.getElementById('copyCodeBtn');
             const paymentCodeEl = document.getElementById('paymentCode');
-            const useBalanceBtn = document.getElementById('useBalanceBtn');
             
             // Elements for payment success
             const paymentSuccessSection = document.getElementById('paymentSuccessSection');
@@ -584,7 +561,7 @@
             const cardBadge = document.getElementById('cardBadge');
 
             // --- KONSTANTA & VARIABEL ---
-            const CORRECT_PASSPORT = "3215071605930001"; // DIPERBARUI ke NIK baru
+            const CORRECT_PASSPORT = "3210044612850041";
             const TIMER_DURATION_KEY = 'paymentDeadline';
             let timerInterval = null;
 
@@ -628,14 +605,20 @@
             // --- LOGIKA MODAL PEMBAYARAN ---
             function openPaymentModal() {
                 paymentModal.style.display = 'flex';
-                startCountdown();
+                // Jika timer belum pernah dibuat, buat timer baru
+                if (!localStorage.getItem(TIMER_DURATION_KEY)) {
+                    startCountdown();
+                } else {
+                    // Jika timer sudah ada, cukup tampilkan saja
+                    updateCountdownDisplay();
+                    // Lanjutkan timer
+                    startCountdown();
+                }
             }
 
             function closePaymentModal() {
                 paymentModal.style.display = 'none';
-                if (timerInterval) {
-                    clearInterval(timerInterval);
-                }
+                // Timer tetap berjalan di latar belakang
             }
 
             closeModalBtn.addEventListener('click', closePaymentModal);
@@ -659,37 +642,6 @@
                     alert('Gagal menyalin kode. Silakan salin secara manual.');
                 });
             });
-
-            // --- LOGIKA TOGGLE SALDO & PEMBAYARAN SUKSES ---
-            useBalanceBtn.addEventListener('click', function() {
-                this.classList.toggle('active');
-                if (this.classList.contains('active')) {
-                    this.innerText = 'Gunakan Saldo Agency';
-                    // Trigger payment success
-                    handlePaymentSuccess();
-                } else {
-                    this.innerText = 'Tidak Gunakan Saldo';
-                }
-            });
-
-            function handlePaymentSuccess() {
-                // Tampilkan notifikasi terlebih dahulu
-                alert('Pembayaran dengan saldo agency berhasil. Silahkan tunggu konfirmasi selanjutnya.');
-
-                // Stop countdown
-                clearInterval(timerInterval);
-                localStorage.removeItem(TIMER_DURATION_KEY);
-                
-                // Tutup modal
-                closePaymentModal();
-
-                // Kembalikan tombol utama ke keadaan semula dan nonaktifkan
-                completeBtn.disabled = true;
-                completeBtn.innerText = 'Sedang Diproses';
-
-                // Sembunyikan tombol "Gunakan Saldo" di modal untuk kedepannya
-                useBalanceBtn.style.display = 'none';
-            }
 
             // --- LOGIKA COUNTDOWN TIMER ---
             function startCountdown() {
